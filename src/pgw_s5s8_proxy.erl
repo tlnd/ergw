@@ -46,6 +46,8 @@
 
 -define('S5/S8-U SGW',  4).
 -define('S5/S8-U PGW',  5).
+-define('S5/S8-C SGW',  6).
+-define('S5/S8-C PGW',  7).
 
 request_spec(v1, Type) ->
     ?GTP_v1_Interface:request_spec(v1, Type);
@@ -436,7 +438,12 @@ set_bearer_from_context(_, _K, IE) ->
     IE.
 
 set_req_from_context(#context{control_port = #gtp_port{ip = CntlIP}, local_control_tei = CntlTEI},
-		     _K, #v2_fully_qualified_tunnel_endpoint_identifier{instance = 0} = IE) ->
+		     _K, #v2_fully_qualified_tunnel_endpoint_identifier{interface_type = ?'S5/S8-C SGW'} = IE) ->
+    IE#v2_fully_qualified_tunnel_endpoint_identifier{
+      key = CntlTEI,
+      ipv4 = gtp_c_lib:ip2bin(CntlIP)};
+set_req_from_context(#context{control_port = #gtp_port{ip = CntlIP}, local_control_tei = CntlTEI},
+		     _K, #v2_fully_qualified_tunnel_endpoint_identifier{interface_type = ?'S5/S8-C PGW'} = IE) ->
     IE#v2_fully_qualified_tunnel_endpoint_identifier{
       key = CntlTEI,
       ipv4 = gtp_c_lib:ip2bin(CntlIP)};
